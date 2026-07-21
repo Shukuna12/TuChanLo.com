@@ -4,8 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudyBalance — Study Smarter, Live Better</title>
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Chart.js CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --primary:#4318FF;
@@ -38,7 +48,7 @@
   }
   ::selection{background:var(--primary-soft); color:var(--primary);}
   a{text-decoration:none; color:inherit;}
-  button{font-family:inherit; cursor:pointer; border:none; background:none;}
+  button{font-family:inherit; cursor:pointer;}
   input, textarea{font-family:inherit;}
 
   /* ===== Layout ===== */
@@ -80,6 +90,7 @@
     font-weight:500;
     transition: all .25s ease;
     position:relative;
+    cursor:pointer;
   }
   .nav-item i{width:18px; text-align:center; font-size:15px;}
   .nav-item:hover{color:#fff; background:rgba(255,255,255,0.08); transform:translateX(2px);}
@@ -338,33 +349,19 @@
   }
   .quick-add button:hover{background:var(--primary-soft); color:var(--primary);}
 
-  /* ===== Focus Center ===== */
-  .focus-wrap{display:flex; flex-direction:column; align-items:center; padding:20px 0 10px 0;}
-  .timer-ring-wrap{position:relative; width:280px; height:280px; margin-bottom:30px;}
-  .timer-ring-wrap svg{transform:rotate(-90deg);}
-  .timer-ring-bg{fill:none; stroke:var(--border); stroke-width:14;}
-  .timer-ring-fg{fill:none; stroke:var(--primary); stroke-width:14; stroke-linecap:round; transition:stroke-dashoffset 1s linear;}
-  .timer-center{
-    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  /* ===== Focus Center Extra Animations ===== */
+  #pomo-circle-fill, 
+  #break-circle-fill, 
+  #eye-circle-fill {
+      transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
   }
-  .timer-center .time{font-size:52px; font-weight:800; color:var(--text);}
-  .timer-center .mode{font-size:13px; color:var(--muted); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-top:4px;}
-  .timer-controls{display:flex; gap:14px; margin-bottom:30px;}
-  .timer-btn{
-    padding:14px 30px; border-radius:14px; font-weight:700; font-size:14px;
-    transition:all .25s ease; display:flex; align-items:center; gap:8px;
+  .animate-pulse-slow {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
-  .timer-btn.start{background:var(--primary); color:#fff; box-shadow:0 12px 24px rgba(67,24,255,0.25);}
-  .timer-btn.start:hover{transform:translateY(-3px);}
-  .timer-btn.reset{background:var(--bg); color:var(--text);}
-  .timer-btn.reset:hover{background:var(--border);}
-  .mode-tabs{display:flex; gap:8px; background:var(--bg); padding:6px; border-radius:14px; margin-bottom:36px;}
-  .mode-tab{padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; color:var(--muted); transition:all .25s ease;}
-  .mode-tab.active{background:var(--card); color:var(--primary); box-shadow:var(--shadow-sm);}
-  .session-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; width:100%; max-width:560px;}
-  .session-stat{background:var(--card); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); padding:18px; text-align:center;}
-  .session-stat h3{font-size:24px; font-weight:800; color:var(--primary);}
-  .session-stat p{font-size:12px; color:var(--muted); font-weight:600; margin-top:4px;}
+  @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+  }
 
   /* ===== Wellness ===== */
   .wellness-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:22px;}
@@ -488,13 +485,15 @@
     .topbar{flex-wrap:wrap;}
     .topbar-left{order:3; max-width:100%;}
     .page-title-mobile{display:block;}
-    .session-stats{grid-template-columns:1fr;}
     .mood-grid{grid-template-columns:repeat(3,1fr);}
     .hero h1{font-size:32px;}
   }
 </style>
 </head>
 <body>
+
+<!-- Audio element cho nhạc tập trung -->
+<audio id="focus-audio" loop></audio>
 
 <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -651,39 +650,202 @@
       </div>
     </section>
 
-    <!-- ============ FOCUS CENTER ============ -->
+    <!-- ============ FOCUS CENTER (REPLACED WITH NEW MODULE) ============ -->
     <section class="page" id="focus">
-      <h1 class="page-h">Focus Center</h1>
-      <p class="subtext">Stay concentrated with the Pomodoro technique.</p>
+      <div class="max-w-6xl w-full mx-auto flex flex-col space-y-5">
+          
+          <!-- Khung Banner Tiêu Đề Đầu Trang -->
+          <header class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-4">
+                  <div class="p-3 bg-indigo-50 text-[#4f46e5] rounded-xl text-xl animate-pulse-slow">
+                      <i class="fa-solid fa-bullseye"></i>
+                  </div>
+                  <div>
+                      <h1 class="text-xl font-bold text-slate-900 tracking-tight">Focus Center</h1>
+                      <p class="text-slate-500 text-sm mt-0.5">Hệ thống công cụ tối ưu thời gian học tập và làm việc khoa học.</p>
+                  </div>
+              </div>
+              <div class="hidden sm:block text-right">
+                  <span class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-4 py-2 rounded-xl">Work Mode Active</span>
+              </div>
+          </header>
 
-      <div class="focus-wrap">
-        <div class="mode-tabs">
-          <button class="mode-tab active" data-mins="25" onclick="setMode(this,25,'Focus')">Focus 25m</button>
-          <button class="mode-tab" data-mins="5" onclick="setMode(this,5,'Short Break')">Short Break 5m</button>
-          <button class="mode-tab" data-mins="15" onclick="setMode(this,15,'Long Break')">Long Break 15m</button>
-        </div>
+          <!-- LƯỚI TÍNH NĂNG -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 flex-1 min-h-0">
+              
+              <!-- [CARD 1] POMODORO TIMER -->
+              <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col justify-center shadow-sm hover:shadow-md transition-shadow min-h-0">
+                  <div class="flex flex-col sm:flex-row gap-4 items-center justify-between w-full">
+                      <div class="flex-1 flex flex-col space-y-4 w-full">
+                          <div class="space-y-2">
+                              <div class="flex justify-between items-center">
+                                  <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl inline-block text-lg">
+                                      <i class="fa-regular fa-clock"></i>
+                                  </div>
+                                  <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">Chế độ: Tập trung</span>
+                              </div>
+                              <h2 class="text-xl font-bold text-slate-800">Pomodoro</h2>
+                              <p class="text-xs text-slate-500 leading-relaxed">Phương pháp học tập 25 phút nghỉ ngắn 5 phút khoa học giúp não bộ duy trì hiệu suất cao.</p>
+                          </div>
 
-        <div class="timer-ring-wrap">
-          <svg width="280" height="280" viewBox="0 0 280 280">
-            <circle class="timer-ring-bg" cx="140" cy="140" r="120"></circle>
-            <circle class="timer-ring-fg" id="ringFg" cx="140" cy="140" r="120" stroke-dasharray="754" stroke-dashoffset="0"></circle>
-          </svg>
-          <div class="timer-center">
-            <div class="time" id="timeDisplay">25:00</div>
-            <div class="mode" id="modeDisplay">Focus</div>
+                          <div class="space-y-1.5">
+                              <span class="text-xs font-semibold text-slate-400 block">Chọn nhanh thời gian:</span>
+                              <div class="flex gap-2" id="pomo-quick-presets">
+                                  <button data-time="25" class="pomo-preset-btn flex-1 bg-blue-50 text-blue-600 font-bold text-xs py-2 rounded-lg border border-blue-100 transition-all hover:bg-blue-100 shadow-sm">25m</button>
+                                  <button data-time="45" class="pomo-preset-btn flex-1 bg-slate-50 text-slate-600 font-semibold text-xs py-2 rounded-lg border border-slate-200 transition-all hover:bg-slate-100">45m</button>
+                                  <button data-time="60" class="pomo-preset-btn flex-1 bg-slate-50 text-slate-600 font-semibold text-xs py-2 rounded-lg border border-slate-200 transition-all hover:bg-slate-100">60m</button>
+                              </div>
+                          </div>
+                          
+                          <div class="flex gap-2 pt-1">
+                              <button id="pomo-start-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                  <i class="fa-solid fa-play text-xs"></i> Bắt đầu tập trung
+                              </button>
+                              <button id="pomo-reset-btn" class="px-4 border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-xl transition-colors text-base">
+                                  <i class="fa-solid fa-rotate-right"></i>
+                              </button>
+                          </div>
+                      </div>
+
+                      <div class="flex flex-col items-center justify-center shrink-0 min-w-[120px] self-center">
+                          <div class="relative w-28 h-28 flex items-center justify-center">
+                              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                  <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="7" fill="transparent" />
+                                  <circle id="pomo-circle-fill" cx="50" cy="50" r="40" stroke="#3b82f6" stroke-width="7" fill="transparent" 
+                                          stroke-dasharray="251.2" stroke-dashoffset="0" />
+                              </svg>
+                              <div class="absolute text-center">
+                                  <span id="pomo-display" class="text-xl font-mono font-bold text-slate-800 tracking-tight">25:00</span>
+                              </div>
+                          </div>
+                          <span id="pomo-status" class="text-xs text-slate-400 font-medium mt-2 text-center whitespace-nowrap">Thời gian tập trung</span>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- [CARD 2] FOCUS MUSIC -->
+              <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col justify-center shadow-sm hover:shadow-md transition-shadow min-h-0">
+                  <div class="flex flex-col space-y-4 w-full">
+                      <div class="space-y-2">
+                          <div class="flex justify-between items-start">
+                              <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl text-lg">
+                                  <i class="fa-solid fa-music"></i>
+                              </div>
+                              <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">Lo-fi & Chill</span>
+                          </div>
+                          <h2 class="text-xl font-bold text-slate-800">Focus Music</h2>
+                          <p class="text-xs text-slate-500 leading-relaxed">Âm thanh sóng não và nhạc nền không lời hỗ trợ loại bỏ tiếng ồn xung quanh cực hiệu quả.</p>
+                      </div>
+                      
+                      <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 w-full space-y-3.5">
+                          <div class="flex justify-between items-center px-1">
+                              <div class="flex flex-col min-w-0 flex-1 mr-3">
+                                  <span class="text-sm font-bold text-slate-700 truncate" id="track-name">Lo-fi Chill Beats cho học tập</span>
+                                  <span class="text-xs text-slate-400 mt-0.5" id="track-status">Đang dừng</span>
+                              </div>
+                              <div class="flex items-center gap-4 shrink-0">
+                                  <button id="prev-btn" class="text-slate-400 hover:text-purple-600 text-base"><i class="fa-solid fa-backward"></i></button>
+                                  <button id="play-btn" class="bg-purple-600 text-white w-9 h-9 rounded-full flex items-center justify-center text-sm hover:bg-purple-700 transition-colors shadow-sm"><i class="fa-solid fa-play"></i></button>
+                                  <button id="next-btn" class="text-slate-400 hover:text-purple-600 text-base"><i class="fa-solid fa-forward"></i></button>
+                              </div>
+                          </div>
+                          <div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
+                              <i class="fa-solid fa-volume-high text-xs text-slate-400 ml-1"></i>
+                              <input type="range" id="volume-control" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600" min="0" max="100" value="50">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- [CARD 3] BREAK REMINDER -->
+              <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col justify-center shadow-sm hover:shadow-md transition-shadow min-h-0">
+                  <div class="flex flex-col sm:flex-row gap-4 items-center justify-between w-full">
+                      <div class="flex-1 flex flex-col space-y-4 w-full">
+                          <div class="space-y-2">
+                              <div class="flex justify-between items-center">
+                                  <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl inline-block text-lg">
+                                      <i class="fa-solid fa-mug-hot"></i>
+                                  </div>
+                                  <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">Bật tự động</span>
+                              </div>
+                              <h2 class="text-xl font-bold text-slate-800">Break Reminder</h2>
+                              <p class="text-xs text-slate-500 leading-relaxed">Hệ thống chủ động nhắc nhở bạn đứng dậy, vận động cơ thể nhẹ nhàng tránh mệt mỏi cơ khớp.</p>
+                          </div>
+
+                          <div class="space-y-2.5 py-1.5 border-t border-dashed border-slate-100">
+                              <div class="flex justify-between items-center text-xs">
+                                  <span class="text-slate-600 font-semibold">Nhắc nhở sau chu kỳ:</span>
+                                  <select id="break-time-select" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 font-bold outline-none cursor-pointer text-sm shadow-sm">
+                                      <option value="45">45 phút</option>
+                                      <option value="60" selected>60 phút</option>
+                                      <option value="90">90 phút</option>
+                                  </select>
+                              </div>
+                              <div class="flex justify-between items-center text-xs">
+                                  <span class="text-slate-600 font-semibold">Bật thông báo đẩy</span>
+                                  <label class="relative inline-flex items-center cursor-pointer">
+                                      <input type="checkbox" id="break-toggle" class="sr-only peer" checked>
+                                      <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+                                  </label>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="flex flex-col items-center justify-center shrink-0 min-w-[120px] self-center">
+                          <div class="relative w-28 h-28 flex items-center justify-center">
+                              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                  <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="7" fill="transparent" />
+                                  <circle id="break-circle-fill" cx="50" cy="50" r="40" stroke="#10b981" stroke-width="7" fill="transparent" 
+                                          stroke-dasharray="251.2" stroke-dashoffset="0" />
+                              </svg>
+                              <div class="absolute text-center">
+                                  <span id="break-text-center" class="text-xl font-mono font-bold text-slate-800 tracking-tight">60:00</span>
+                              </div>
+                          </div>
+                          <span id="break-status-lbl" class="text-xs text-slate-400 font-medium mt-2 text-center whitespace-nowrap">Đang theo dõi...</span>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- [CARD 4] EYE CARE -->
+              <div class="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col justify-center shadow-sm hover:shadow-md transition-shadow min-h-0">
+                  <div class="flex flex-col sm:flex-row gap-4 items-center justify-between w-full">
+                      <div class="flex-1 flex flex-col space-y-4 w-full">
+                          <div class="space-y-2">
+                              <div class="flex justify-between items-center">
+                                  <div class="p-2.5 bg-amber-50 text-amber-600 rounded-xl inline-block text-lg">
+                                      <i class="fa-regular fa-eye"></i>
+                                  </div>
+                                  <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-3 py-1 rounded-lg">Quy tắc 20-20-20</span>
+                              </div>
+                              <h2 class="text-xl font-bold text-slate-800">Eye Care</h2>
+                              <p class="text-xs text-slate-500 leading-relaxed">Cứ sau 20 phút học tập, nhìn xa khoảng 6m trong vòng 20 giây để giảm mỏi mắt, bảo vệ thị lực.</p>
+                          </div>
+                          
+                          <div class="w-full">
+                              <button id="eye-relax-btn" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold text-sm py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                  <i class="fa-solid fa-eye-dropper"></i> Thư giãn mắt ngay
+                              </button>
+                          </div>
+                      </div>
+
+                      <div class="flex flex-col items-center justify-center shrink-0 min-w-[120px] self-center">
+                          <div class="relative w-28 h-28 flex items-center justify-center">
+                              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                  <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="7" fill="transparent" />
+                                  <circle id="eye-circle-fill" cx="50" cy="50" r="40" stroke="#3b82f6" stroke-width="7" fill="transparent" 
+                                          stroke-dasharray="251.2" stroke-dashoffset="0" />
+                              </svg>
+                              <div class="absolute text-center">
+                                  <span id="eye-text-center" class="text-xl font-mono font-bold text-slate-800 tracking-tight">20:00</span>
+                              </div>
+                          </div>
+                          <span id="eye-status-lbl" class="text-xs text-slate-400 font-medium mt-2 text-center whitespace-nowrap">Mắt đang an toàn</span>
+                      </div>
+                  </div>
+              </div>
+
           </div>
-        </div>
-
-        <div class="timer-controls">
-          <button class="timer-btn start" id="startBtn" onclick="toggleTimer()"><i class="fa-solid fa-play" id="startIcon"></i> <span id="startLabel">Start</span></button>
-          <button class="timer-btn reset" onclick="resetTimer()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-        </div>
-
-        <div class="session-stats">
-          <div class="session-stat"><h3 id="sessionsToday">3</h3><p>Sessions Today</p></div>
-          <div class="session-stat"><h3 id="focusMinutes">75</h3><p>Focus Minutes</p></div>
-          <div class="session-stat"><h3>45</h3><p>Total This Week</p></div>
-        </div>
       </div>
     </section>
 
@@ -842,6 +1004,36 @@
   </div>
 </div>
 
+<!-- OVERLAY KHÓA MÀN HÌNH NGHỈ GIẢI LAO POMODORO -->
+<div id="pomo-overlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[500] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl mx-4">
+        <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-bounce">
+            <i class="fa-solid fa-mug-hot"></i>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Đã hoàn thành phiên học!</h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">Tuyệt vời lắm! Hãy tạm rời màn hình và thư giãn trong 5 phút nhé.</p>
+        <div class="text-5xl font-mono font-bold text-emerald-500 mb-6" id="pomo-overlay-countdown">05:00</div>
+        <button id="close-pomo-overlay-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors text-sm shadow-sm">
+            Vào lại phiên học
+        </button>
+    </div>
+</div>
+
+<!-- OVERLAY KHÓA MÀN HÌNH CHĂM SÓC MẮT -->
+<div id="eye-overlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[500] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl mx-4">
+        <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-bounce">
+            <i class="fa-solid fa-eye"></i>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Đến lúc cho mắt nghỉ ngơi!</h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">Hãy nhìn ra xa khoảng 6 mét trong vòng 20 giây nhé.</p>
+        <div class="text-5xl font-mono font-bold text-indigo-600 mb-6" id="overlay-countdown">20s</div>
+        <button id="close-overlay-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors text-sm shadow-sm">
+            Tôi đã nghỉ xong
+        </button>
+    </div>
+</div>
+
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Saved!</span></div>
 
 <script>
@@ -987,68 +1179,330 @@ function addStudyTime(hours){
   showToast(`Added ${hours}h to today's study goal`);
 }
 
-/* ============ FOCUS CENTER — POMODORO ============ */
-let totalSeconds = 25*60;
-let remaining = totalSeconds;
-let timerInterval = null;
-let running = false;
-const circumference = 2 * Math.PI * 120;
-document.getElementById('ringFg').setAttribute('stroke-dasharray', circumference);
+/* ============ FOCUS CENTER LOGIC (NEW IMPLEMENTATION) ============ */
+// 1. Pomodoro Logic
+let pomoTotalTime = 25 * 60;
+let pomoTime = 25 * 60;
+let pomoTimer = null;
+let isPomoRunning = false;
+const pomoCircle = document.getElementById('pomo-circle-fill');
+const pomoCircleMax = 251.2;
 
-function updateRing(){
-  const offset = circumference * (1 - remaining/totalSeconds);
-  document.getElementById('ringFg').style.strokeDashoffset = offset;
-}
-function updateDisplay(){
-  const m = Math.floor(remaining/60).toString().padStart(2,'0');
-  const s = Math.floor(remaining%60).toString().padStart(2,'0');
-  document.getElementById('timeDisplay').textContent = `${m}:${s}`;
-  updateRing();
-}
-updateDisplay();
-
-function toggleTimer(){
-  if(running){
-    clearInterval(timerInterval);
-    running = false;
-    document.getElementById('startIcon').className = 'fa-solid fa-play';
-    document.getElementById('startLabel').textContent = 'Start';
-  } else {
-    running = true;
-    document.getElementById('startIcon').className = 'fa-solid fa-pause';
-    document.getElementById('startLabel').textContent = 'Pause';
-    timerInterval = setInterval(() => {
-      if(remaining > 0){
-        remaining--;
-        updateDisplay();
-      } else {
-        clearInterval(timerInterval);
-        running = false;
-        document.getElementById('startIcon').className = 'fa-solid fa-play';
-        document.getElementById('startLabel').textContent = 'Start';
-        document.getElementById('sessionsToday').textContent = parseInt(document.getElementById('sessionsToday').textContent) + 1;
-        showToast('Session complete! Great work 🎉');
-      }
-    }, 1000);
+function updatePomoDisplay() {
+  const m = Math.floor(pomoTime / 60).toString().padStart(2, '0');
+  const s = (pomoTime % 60).toString().padStart(2, '0');
+  const display = document.getElementById('pomo-display');
+  if(display) display.textContent = `${m}:${s}`;
+  
+  if(pomoCircle) {
+    const offset = pomoCircleMax * (1 - pomoTime / pomoTotalTime);
+    pomoCircle.style.strokeDashoffset = offset;
   }
 }
 
-function resetTimer(){
-  clearInterval(timerInterval);
-  running = false;
-  remaining = totalSeconds;
-  document.getElementById('startIcon').className = 'fa-solid fa-play';
-  document.getElementById('startLabel').textContent = 'Start';
-  updateDisplay();
+document.querySelectorAll('.pomo-preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pomo-preset-btn').forEach(b => {
+      b.classList.remove('bg-blue-50', 'text-blue-600', 'border-blue-100');
+      b.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+    });
+    btn.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
+    btn.classList.add('bg-blue-50', 'text-blue-600', 'border-blue-100');
+    
+    const mins = parseInt(btn.dataset.time);
+    pomoTotalTime = mins * 60;
+    pomoTime = pomoTotalTime;
+    resetPomo();
+  });
+});
+
+const pomoStartBtn = document.getElementById('pomo-start-btn');
+const pomoResetBtn = document.getElementById('pomo-reset-btn');
+
+if(pomoStartBtn) {
+  pomoStartBtn.addEventListener('click', () => {
+    if(isPomoRunning) { pausePomo(); } 
+    else { startPomo(); }
+  });
+}
+if(pomoResetBtn) { pomoResetBtn.addEventListener('click', resetPomo); }
+
+function startPomo() {
+  isPomoRunning = true;
+  if(pomoStartBtn) pomoStartBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i> Tạm dừng';
+  document.getElementById('pomo-status').textContent = 'Đang tập trung...';
+  
+  pomoTimer = setInterval(() => {
+    if(pomoTime > 0) {
+      pomoTime--;
+      updatePomoDisplay();
+    } else {
+      pausePomo();
+      showPomoOverlay();
+    }
+  }, 1000);
 }
 
-function setMode(btn, mins, label){
-  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('modeDisplay').textContent = label;
-  totalSeconds = mins*60;
-  resetTimer();
+function pausePomo() {
+  isPomoRunning = false;
+  clearInterval(pomoTimer);
+  if(pomoStartBtn) pomoStartBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i> Bắt đầu tập trung';
+  document.getElementById('pomo-status').textContent = 'Đã tạm dừng';
 }
+
+function resetPomo() {
+  pausePomo();
+  pomoTime = pomoTotalTime;
+  document.getElementById('pomo-status').textContent = 'Thời gian tập trung';
+  updatePomoDisplay();
+}
+
+let pomoRestTimer = null;
+let pomoRestTime = 5 * 60;
+
+function showPomoOverlay() {
+  const overlay = document.getElementById('pomo-overlay');
+  if(!overlay) return;
+  overlay.classList.remove('hidden');
+  setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+  
+  pomoRestTime = 5 * 60;
+  updatePomoRestDisplay();
+  
+  pomoRestTimer = setInterval(() => {
+    if(pomoRestTime > 0) {
+      pomoRestTime--;
+      updatePomoRestDisplay();
+    } else {
+      clearInterval(pomoRestTimer);
+    }
+  }, 1000);
+}
+
+function updatePomoRestDisplay() {
+  const m = Math.floor(pomoRestTime / 60).toString().padStart(2, '0');
+  const s = (pomoRestTime % 60).toString().padStart(2, '0');
+  const el = document.getElementById('pomo-overlay-countdown');
+  if(el) el.textContent = `${m}:${s}`;
+}
+
+document.getElementById('close-pomo-overlay-btn')?.addEventListener('click', () => {
+  const overlay = document.getElementById('pomo-overlay');
+  if(overlay) {
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  }
+  clearInterval(pomoRestTimer);
+  resetPomo();
+});
+
+// 2. Focus Music Logic
+const audio = document.getElementById('focus-audio');
+const playBtn = document.getElementById('play-btn');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const trackNameEl = document.getElementById('track-name');
+const trackStatusEl = document.getElementById('track-status');
+const volumeControl = document.getElementById('volume-control');
+
+const playlist = [
+  { name: "Lo-fi Chill Beats cho học tập", src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" },
+  { name: "Sóng não Alpha tập trung sâu", src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=ambient-piano-amp-strings-10711.mp3" },
+  { name: "Mưa đêm thư giãn & Lofi piano", src: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=soft-rain-ambient-111154.mp3" }
+];
+let currentTrackIndex = 0;
+let isPlaying = false;
+
+function loadTrack(index) {
+  currentTrackIndex = index;
+  if(audio) audio.src = playlist[index].src;
+  if(trackNameEl) trackNameEl.textContent = playlist[index].name;
+}
+
+if(audio) {
+  loadTrack(0);
+  if(volumeControl) {
+    audio.volume = volumeControl.value / 100;
+    volumeControl.addEventListener('input', (e) => {
+      audio.volume = e.target.value / 100;
+    });
+  }
+}
+
+if(playBtn) {
+  playBtn.addEventListener('click', () => {
+    if(isPlaying) { pauseMusic(); } 
+    else { playMusic(); }
+  });
+}
+
+function playMusic() {
+  if(!audio) return;
+  audio.play().then(() => {
+    isPlaying = true;
+    if(playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    if(trackStatusEl) trackStatusEl.textContent = 'Đang phát...';
+  }).catch(e => { console.log("Audio error:", e); });
+}
+
+function pauseMusic() {
+  if(!audio) return;
+  audio.pause();
+  isPlaying = false;
+  if(playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+  if(trackStatusEl) trackStatusEl.textContent = 'Đang dừng';
+}
+
+if(prevBtn) {
+  prevBtn.addEventListener('click', () => {
+    currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+    loadTrack(currentTrackIndex);
+    if(isPlaying) playMusic();
+  });
+}
+
+if(nextBtn) {
+  nextBtn.addEventListener('click', () => {
+    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+    loadTrack(currentTrackIndex);
+    if(isPlaying) playMusic();
+  });
+}
+
+// 3. Break Reminder Logic
+const breakSelect = document.getElementById('break-time-select');
+const breakToggle = document.getElementById('break-toggle');
+const breakCircle = document.getElementById('break-circle-fill');
+const breakText = document.getElementById('break-text-center');
+const breakStatusLbl = document.getElementById('break-status-lbl');
+
+let breakTotalTime = 60 * 60;
+let breakTime = 60 * 60;
+let breakTimer = null;
+
+function updateBreakDisplay() {
+  const m = Math.floor(breakTime / 60).toString().padStart(2, '0');
+  const s = (breakTime % 60).toString().padStart(2, '0');
+  if(breakText) breakText.textContent = `${m}:${s}`;
+
+  if(breakCircle) {
+    const offset = 251.2 * (1 - breakTime / breakTotalTime);
+    breakCircle.style.strokeDashoffset = offset;
+  }
+}
+
+function startBreakTracking() {
+  clearInterval(breakTimer);
+  if(!breakToggle || !breakToggle.checked) {
+    if(breakStatusLbl) breakStatusLbl.textContent = 'Đã tắt nhắc nhở';
+    return;
+  }
+
+  if(breakStatusLbl) breakStatusLbl.textContent = 'Đang theo dõi...';
+  breakTimer = setInterval(() => {
+    if(breakTime > 0) {
+      breakTime--;
+      updateBreakDisplay();
+    } else {
+      showToast('Đã đến lúc nghỉ giải lao nhẹ nhàng! ☕');
+      breakTime = breakTotalTime;
+      updateBreakDisplay();
+    }
+  }, 1000);
+}
+
+if(breakSelect) {
+  breakSelect.addEventListener('change', (e) => {
+    breakTotalTime = parseInt(e.target.value) * 60;
+    breakTime = breakTotalTime;
+    updateBreakDisplay();
+    startBreakTracking();
+  });
+}
+
+if(breakToggle) {
+  breakToggle.addEventListener('change', () => {
+    if(breakToggle.checked) {
+      startBreakTracking();
+    } else {
+      clearInterval(breakTimer);
+      if(breakStatusLbl) breakStatusLbl.textContent = 'Đã tắt nhắc nhở';
+    }
+  });
+}
+startBreakTracking();
+
+// 4. Eye Care Logic (Quy tắc 20-20-20)
+let eyeTotalTime = 20 * 60;
+let eyeTime = 20 * 60;
+let eyeTimer = null;
+const eyeCircle = document.getElementById('eye-circle-fill');
+const eyeText = document.getElementById('eye-text-center');
+const eyeRelaxBtn = document.getElementById('eye-relax-btn');
+
+function updateEyeDisplay() {
+  const m = Math.floor(eyeTime / 60).toString().padStart(2, '0');
+  const s = (eyeTime % 60).toString().padStart(2, '0');
+  if(eyeText) eyeText.textContent = `${m}:${s}`;
+
+  if(eyeCircle) {
+    const offset = 251.2 * (1 - eyeTime / eyeTotalTime);
+    eyeCircle.style.strokeDashoffset = offset;
+  }
+}
+
+function startEyeTimer() {
+  clearInterval(eyeTimer);
+  eyeTimer = setInterval(() => {
+    if(eyeTime > 0) {
+      eyeTime--;
+      updateEyeDisplay();
+    } else {
+      triggerEyeRelaxation();
+    }
+  }, 1000);
+}
+
+if(eyeRelaxBtn) {
+  eyeRelaxBtn.addEventListener('click', triggerEyeRelaxation);
+}
+
+let eyeOverlayTimer = null;
+let eyeOverlaySeconds = 20;
+
+function triggerEyeRelaxation() {
+  const overlay = document.getElementById('eye-overlay');
+  if(!overlay) return;
+  overlay.classList.remove('hidden');
+  setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+
+  eyeOverlaySeconds = 20;
+  const cd = document.getElementById('overlay-countdown');
+  if(cd) cd.textContent = `${eyeOverlaySeconds}s`;
+
+  clearInterval(eyeOverlayTimer);
+  eyeOverlayTimer = setInterval(() => {
+    if(eyeOverlaySeconds > 0) {
+      eyeOverlaySeconds--;
+      if(cd) cd.textContent = `${eyeOverlaySeconds}s`;
+    } else {
+      clearInterval(eyeOverlayTimer);
+    }
+  }, 1000);
+}
+
+document.getElementById('close-overlay-btn')?.addEventListener('click', () => {
+  const overlay = document.getElementById('eye-overlay');
+  if(overlay) {
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  }
+  clearInterval(eyeOverlayTimer);
+  eyeTime = eyeTotalTime;
+  updateEyeDisplay();
+  startEyeTimer();
+});
+startEyeTimer();
 
 /* ============ WELLNESS ============ */
 document.querySelectorAll('.mood-btn').forEach(btn => {
