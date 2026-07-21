@@ -1,0 +1,572 @@
+/* Khởi tạo biến màu sắc & reset CSS */
+:root {
+    --primary: #4F8EF7;
+    --primary-hover: #357ae8;
+    --bg-main: #f4f7fc;
+    --white: #ffffff;
+    --text-dark: #2c3e50;
+    --text-muted: #7f8c8d;
+    --border: #e2e8f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    padding-top: 80px; /* Chừa không gian cho navbar fixed */
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: var(--white);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+
+
+/* ===== SIDEBAR PHONG CÁCH HORIZONX ===== */
+.sidebar {
+    width: 90px;                     /* Thu hẹp thanh tác vụ vừa vặn icon */
+    background-color: #F8F9FA;       /* Màu nền trắng xám tối giản nhạt */
+    border-right: 1px solid #EAEAEA;
+    padding: 35px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 35px 35px 0 0;    /* Bo tròn đỉnh góc cực mạnh giống ảnh */
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+/* Vẽ cấu trúc Logo 4 cánh bằng CSS */
+.logo-container {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.horizon-logo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+}
+
+.petal {
+    background-color: #111111;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+/* Định hình bo góc từng cánh để tạo khoảng trống hình ngôi sao ở giữa */
+.petal.tl { border-radius: 12px 12px 0 12px; }
+.petal.tr { border-radius: 12px 12px 12px 0; }
+.petal.bl { border-radius: 12px 0 12px 12px; }
+.petal.br { border-radius: 0 12px 12px 12px; }
+
+.horizon-logo:hover .petal {
+    transform: scale(0.9);
+}
+
+/* ===== DANH SÁCH ICON MENU ===== */
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;                       /* Khoảng cách căn đều giữa các icon */
+    width: 100%;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 52px;
+    color: #888888;                  /* Màu icon mặc định khi chưa active */
+    font-size: 20px;
+    text-decoration: none;
+    border-radius: 16px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hiệu ứng khi di chuột qua các ô icon chưa chọn */
+.menu-item:hover {
+    color: #111111;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Trạng thái được chọn kích hoạt (Active) y hệt mẫu */
+.menu-item.active {
+    background-color: #111111;       /* Khối đen bo góc bao quanh */
+    color: #FFFFFF;                  /* Icon chuyển sang màu trắng */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Đảm bảo khung nội dung chính tự động co giãn theo thanh tác vụ mới */
+.main-content {
+    flex-grow: 1;
+    padding: 35px 40px;
+    background: #F5F8FD;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+}
+
+.btn-login {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: 40px;
+}
+
+.welcome-tag {
+    background: rgba(79, 142, 247, 0.1);
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    line-height: 1.2;
+    margin: 15px 0;
+    font-weight: 700;
+}
+
+.hero-content p {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary);
+    color: var(--white);
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(79, 142, 247, 0.3);
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+/* Khối vẽ minh họa từ hình tròn lỗi ở ảnh 1 */
+.illustration-box {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+}
+
+.circle-bg {
+    width: 100%;
+    height: 100%;
+    background: #e8f0fe;
+    border-radius: 50%;
+}
+
+.layout-icon {
+    position: absolute;
+    font-size: 90px;
+    color: var(--primary);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* ===== DASHBOARD STRUCTURE ===== */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-section {
+    margin-bottom: 60px;
+    scroll-margin-top: 90px;
+}
+
+.section-title {
+    margin-bottom: 25px;
+}
+
+.section-title h2 {
+    color: var(--primary);
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.section-title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Cards global style */
+.card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.stat-card h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stat-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.stat-value h2 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.stat-card p {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.icon-indicator {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon-indicator.green { background: #e6f4ea; color: #137333; }
+.icon-indicator.blue { background: #e8f0fe; color: #1a73e8; }
+.icon-indicator.orange { background: #fef7e0; color: #b06000; }
+
+/* Planner Grid Split */
+.planner-grid, .wellness-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 25px;
+}
+
+/* Task list styles */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.badge {
+    background: #eaf2ff;
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.task-info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-title {
+    font-weight: 500;
+}
+
+.task-title.strike {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.priority {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.priority.high { background: #fce8e6; color: #c5221f; }
+.priority.medium { background: #fef7e0; color: #b06000; }
+
+/* Custom Form Design */
+.styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.styled-form input[type="text"],
+.styled-form input[type="email"],
+.styled-form input[type="date"],
+.styled-form input[type="time"],
+.styled-form textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.styled-form input:focus, .styled-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 4px;
+}
+
+.radio-group label {
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-submit {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-submit:hover {
+    background: var(--primary-hover);
+}
+
+/* ===== WELLNESS WORK ===== */
+.mood-options {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.mood-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 15px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 24px;
+    width: 18%;
+    transition: 0.3s;
+}
+
+.mood-btn span {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.mood-btn:hover, .mood-btn.active {
+    border-color: var(--primary);
+    background: rgba(79, 142, 247, 0.05);
+    transform: translateY(-3px);
+}
+
+.mood-btn.active span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.widgets-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+blockquote {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 8px;
+    border-left: 3px solid var(--primary);
+    padding-left: 10px;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 15px 0;
+}
+
+.btn-water {
+    background: #eaf2ff;
+    color: var(--primary);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-water:hover { background: var(--primary); color: var(--white); }
+.btn-water.success { background: #2ecc71; color: var(--white); }
+
+/* ===== CONTACT SECTION ===== */
+.contact-card {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    padding: 0;
+    overflow: hidden;
+}
+
+.contact-info-side {
+    background: linear-gradient(135deg, var(--primary), #6fa4f9);
+    color: var(--white);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.contact-info-side h2 { font-size: 28px; }
+.contact-info-side p { margin-top: 15px; opacity: 0.9; line-height: 1.6;}
+.quote-footer { font-size: 13px; font-style: italic; opacity: 0.8; }
+
+.contact-form-side {
+    padding: 40px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width: 968px) {
+    .hero-section, .planner-grid, .wellness-grid, .contact-card {
+        grid-template-columns: 1fr;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .contact-info-side { gap: 20px; }
+}
+
+@media(max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .nav-menu { display: none; } /* Mobile tối giản */
+    .hero-content h1 { font-size: 34px; }
+    .mood-options { flex-wrap: wrap; gap: 10px; }
+    .mood-btn { width: 45%; }
+}
